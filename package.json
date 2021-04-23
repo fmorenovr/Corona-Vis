@@ -1,0 +1,55 @@
+{
+  "name": "corona_peru",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@deck.gl/core": "^7.2.3",
+    "@deck.gl/geo-layers": "^7.2.3",
+    "@deck.gl/layers": "^7.2.3",
+    "@deck.gl/mesh-layers": "^8.0.16",
+    "@deck.gl/react": "^7.2.3",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "babel-loader": "^8.1.0",
+    "bootstrap": "^4.4.1",
+    "d3": "^5.14.2",
+    "eslint-loader": "^3.0.3",
+    "fusioncharts": "^3.14.1",
+    "little-loader": "^0.2.0",
+    "pondjs": "^1.0.0-alpha.0",
+    "react": "^16.13.1",
+    "react-d3-components": "^0.9.1",
+    "react-d3-library": "^1.1.8",
+    "react-dom": "^16.13.1",
+    "react-fusioncharts": "^3.0.1",
+    "react-map-gl": "^5.0.10",
+    "react-mapbox-gl": "^4.8.2",
+    "react-rt-chart": "^2.0.0",
+    "react-scripts": "^3.4.1",
+    "react-timeseries-charts": "^0.16.1",
+    "react-vis": "^1.11.7",
+    "webpack": "4.42.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
