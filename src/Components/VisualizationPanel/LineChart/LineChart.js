@@ -19,7 +19,7 @@ export default class LineChart extends React.Component {
 				return {date: item.date, value: item.value - data[i-1].value};
 			}
 		})
-		lineChartPlot = D3LineChart("#linePlot", this.props.data, this.props.timeLineData, daily_case, endDomain, this.props.projection);
+		lineChartPlot = D3LineChart("#linePlot", this.props.data, this.props.timeLineData, daily_case, endDomain, this.props.projection, this.props.nameRegion);
     }
 
     componentDidUpdate(){
@@ -34,7 +34,7 @@ export default class LineChart extends React.Component {
 				return {date: item.date, value: item.value - data[i-1].value};
 			}
 		})
-		lineChartPlot = D3LineChart("#linePlot", this.props.data, this.props.timeLineData, daily_case, endDomain, this.props.projection);
+		lineChartPlot = D3LineChart("#linePlot", this.props.data, this.props.timeLineData, daily_case, endDomain, this.props.projection, this.props.nameRegion);
     }
 
     handleChangeForm = (event) => {

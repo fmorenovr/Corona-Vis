@@ -15,13 +15,15 @@ import * as d3 from 'd3'
 
 import new_cases_department from "./preprocess/data/DEPARTAMENTO_news.csv"
 import intervals_department from "./preprocess/data/DEPARTAMENTO_intervals.csv"
+import total_cases_department from "./preprocess/data/DEPARTAMENTO_total.csv"
 
+import new_cases_province from "./preprocess/data/PROVINCIA_news.csv"
+import intervals_province from "./preprocess/data/PROVINCIA_intervals.csv"
 
 import new_cases_distric from "./preprocess/data/DISTRITO_news.csv"
 import intervals_distric from "./preprocess/data/DISTRITO_intervals.csv"
 
 const host_name = ""
-var dataa = []
 
 const processDataAsycn = async () => {  
 	let a = await d3.csv(intervals_distric)
@@ -30,24 +32,25 @@ const processDataAsycn = async () => {
 
 export default class App extends React.Component {
   	
-  	state = {
+	state = {
 		proyection_num: 2,
 
+		newCasesTotalData: d3.csv(new_cases_department),
 		intervalTotalData: d3.csv(intervals_department),
+		totalCasesData: d3.csv(total_cases_department),
+		
 		newCasesDistricData: d3.csv(new_cases_distric),
 		intervalsDistricData: d3.csv(intervals_distric),
-
-		intervalsDistricData2: d3.csv(intervals_distric).then(function(values){dataa = values; return values}),
-
 
 		//dictrictData: d3.csv(`http://${host_name}:8000/surface/maps/`),
 		//regionData: d3.csv(`http://${host_name}:8000/surface/maps/`),
 
 		timeLineData: [],
 		intervalLineData: [],
-
-		finalData: []
-  	}
+		finalData: [],
+		totalData: [],
+	}
+	
 	getPredicction = (t, x_t) => {
 		var n = 30*10**12; // poblacion
 		var x_0 = 1; // infectado el dia t=0
@@ -78,7 +81,7 @@ export default class App extends React.Component {
 
 
 		var self = this;
-		var i=0
+		var i=0;
 
 		this.state.intervalsDistricData.then(function(intervalData){
 
@@ -108,31 +111,33 @@ export default class App extends React.Component {
 						array_temp_time_line.push(temp)
 					}
 				})
-				//console.log("#####")
-				//console.log(array_temp_time_line)
-				self.setState({
-					timeLineData: array_temp_time_line,
-					intervalLineData: interval_temp,
-
-					finalData: intervalData
+				var history_temp = [];
+        self.state.totalCasesData.then(function(cases){
+		      
+	        cases.map(function(item){
+		        //console.log(item)
+		        var temp_dict = {}
+		        temp_dict["name"] = item.region;
+		        temp_dict["exits"] = parseInt(item.confirmados);
+		        
+		        history_temp.push(temp_dict)
+      		})
+      		
+				  self.setState({
+				    nameRegion: name,
+				    timeLineData: array_temp_time_line,
+				    intervalLineData: interval_temp,
+				    finalData: intervalData,
+				    totalData: history_temp,
+				  })
 				})
-
 			})
-
-
-			
 		})
-
-
-		//this.setState({
-		//	timeLineData: d3.csv(`http://${host_name}:8000/surface/maps/${name}`),
-		//	intervalLineData: d3.csv(`http://${host_name}:8000/surface/maps/${name}`),
-		//})
 	}
 
 	getNewRegionData = (region_name) => {
 		var name = region_name.name.toUpperCase()
-
+   /*
 		var array_temp_time_line = []
 		for (var prop in new_cases_department){
 			var value = new_cases_department[prop]
@@ -147,7 +152,7 @@ export default class App extends React.Component {
 				array_temp_time_line.push(props)
 			}
 		}
-
+    */
 		var self = this;
 		var i=0
 		this.state.intervalTotalData.then(function(intervalData){
@@ -162,16 +167,43 @@ export default class App extends React.Component {
 				}
 			})
 
-			//console.log(interval_temp)
-
-
-			self.setState({
-				timeLineData: array_temp_time_line,
-				intervalLineData: interval_temp,
+			//console.log(self.state.newCasesDistricData)
+			var array_temp_time_line = []
+			self.state.newCasesTotalData.then(function(cases){
+				
+				cases.map(function(item){
+					if (item.state == name){
+						//console.log(item)
+						var temp = []
+						temp.push( item.state );
+						temp.push( new Date(item.date) );
+						temp.push( item.confirmed_new );
+						array_temp_time_line.push(temp)
+					}
+				})
+				
+				var history_temp = [];
+        self.state.totalCasesData.then(function(cases){
+		      
+	        cases.map(function(item){
+		        //console.log(item)
+		        var temp_dict = {}
+		        temp_dict["name"] = item.region;
+		        temp_dict["exits"] = parseInt(item.confirmados);
+		        
+		        history_temp.push(temp_dict)
+      		})
+      		
+				  self.setState({
+				    nameRegion: name,
+				    timeLineData: array_temp_time_line,
+				    intervalLineData: interval_temp,
+				    finalData: intervalData,
+				    totalData: history_temp,
+				  })
+			  })
 			})
 		})
-
-		
 	}
 
 	sleep(milliseconds) {
@@ -182,11 +214,9 @@ export default class App extends React.Component {
 			}
 		}
 	}
-
-
-
+	
 	render(){
-
+    
 		var history = [
 			{date: new Date(2020, 2, 6, 18, 0), value: 1, descartados: 0},
 			{date: new Date(2020, 2, 7, 18, 0), value: 6, descartados: 0},
@@ -263,7 +293,6 @@ export default class App extends React.Component {
 		var projection = [
 			updated,
 		]
-
 		
 		var predicted = this.getPredicction(days, updated.value);
 		for (var i = 0; i < this.state.proyection_num; i++){
@@ -274,8 +303,7 @@ export default class App extends React.Component {
 			projection.push({date: temp_date, value: predicted})
 			predicted = this.getPredicction(days + i + 1, predicted);
 		}
-
-
+    
 		var data = [
             {name: 'Lima', code:'LIM', exits: 76176, coordinates: [-76.705245, -11.817466]},
             {name: 'Arequipa', code:'AQP', exits: 2198, coordinates: [-71.750411, -16.197379]},
@@ -305,77 +333,78 @@ export default class App extends React.Component {
         ]
 
         data = data.slice().sort((a, b) => d3.descending(a.exits, b.exits))
-
-        var total_confirmados = d3.sum(data, function(it){ return it.exits})
-
+        
         const markSeries = [];
         data.map(function(item, i) {
         	//console.log(i)
 	        markSeries.push(
 	        	<li><spam className="data-exist">{item.exits} </spam>{item.name} </li>
 	        )
-	    });
+	      });
+	      
+      var formatTime = d3.timeFormat("%B %d, %Y %I:%M %p");
 
-        var formatTime = d3.timeFormat("%B %d, %Y %I:%M %p");
-
-		var a = processDataAsycn()
+      var total_confirmados = d3.sum(this.state.totalData, function(it){ return it.exits})
+		  //var data = this.state.totalData;
+		  
+		//var a = processDataAsycn()
 		//console.log(a)
 
 	    return (
 	    	<div className="">
 	    		<div className="col-sm-12 header">
 	            	Coronavirus en Perú <spam className="By-class">By <a href="https://twitter.com/wzunigah">wzuniga</a> and <a href="https://twitter.com/fmorenovr">fmorenovr</a></spam>
-	            </div>
+          </div>
 
-	            <div className="col-sm-12 body">
-					<div className="col-sm-12 body-map">
-						<div id="legendMap" ></div>
-						<HexagonMap 
-							intervalsDistricData = { this.state.intervalsDistricData }
-							finalData = { this.state.finalData }
-							data = {data}
-							getNewDistrictData = { this.getNewDistrictData }
-						/>
-					</div>
+          <div className="col-sm-12 body">
 		        	
-					<div className="box-total">
-
-							<div className="text-conf" >Total Confirmados</div>
-							<div className="num-conf" >{total_confirmados}</div>
-							<hr/>
-					</div>
+					  <div className="box-total">
+						  <div className="text-conf" >Total Confirmados</div>
+						  <div className="num-conf" >{total_confirmados}</div>
+						  <hr/>
+					  </div>
+					  
+					  <div className="col-sm-12 body-map">
+						  <div id="legendMap" ></div>
+						  <HexagonMap 
+					      nameRegion = {this.state.nameRegion}
+							  intervalsDistricData = { this.state.intervalsDistricData }
+							  finalData = { this.state.finalData }
+							  data = {data}
+							  getNewDistrictData = { this.getNewDistrictData }
+						  />
+					  </div>
 		        	
-					<div className="box-bar">
-		        		<BarChart
-		        			data = { data }
-							handleChangeState = { this.handleChangeState }
-							getNewRegionData = { this.getNewRegionData }
-		        		/>
-						
-		        	</div>
+					  <div className="box-bar">
+          		<BarChart
+							  intervalsDistricData = { this.state.intervalsTotalData }
+							  finalData = { this.state.finalData }
+          			data = { data }
+					      getNewRegionData = { this.getNewRegionData }
+          		/>
+	        	</div>
 
-					<div className="box-interval">
-						
-		        		<IntervalPlot
-							intervalLineData = { this.state.intervalLineData }
-		        			data = { data }
-		        			handleChangeState = { this.handleChangeState }
-		        		/>
-		        	</div>
+					  <div className="box-interval">
+        		  <IntervalPlot
+							  intervalLineData = { this.state.intervalLineData }
+	        			data = { data }
+	        			handleChangeState = { this.handleChangeState }
+	        		/>
+	        	</div>
 
-					<div className="box-line">
-						<LineChart
-							timeLineData = { this.state.timeLineData }
-		        			data = { history }
-		        			last = { updated }
-		        			projection = { projection }
-		        			proyection_num = { this.state.proyection_num }
-
-		        			handleChangeState = { this.handleChangeState }
-		        		/>
-		        	</div>
+				    <div className="box-line">
+					    <LineChart
+			          nameRegion = {this.state.nameRegion}
+				        timeLineData = { this.state.timeLineData }
+          			data = { history }
+          			last = { updated }
+          			projection = { projection }
+          			proyection_num = { this.state.proyection_num }
+          			handleChangeState = { this.handleChangeState }
+          		/>
+	        	</div>
 	    		</div>
-	        </div>
+        </div>
 	    );
 	}
 }

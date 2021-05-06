@@ -14,8 +14,6 @@ import {ScatterplotLayer} from '@deck.gl/layers';
 import "./HexagonMap.css"
 
 import dataDistrito from "./distrito.json"
-//import dataDistrito from "./test.json"
-
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1Ijoid3p1bmlnYSIsImEiOiJjazcwdGhnbjcwMHBuM2xsOXJmZWp0YzYwIn0.8GEV3zUu8yiT2xsLzYBwJw';
