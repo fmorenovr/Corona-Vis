@@ -10,6 +10,8 @@ import zipfile
 import wget
 import os
 
+from datetime import datetime
+
 def load_data(data_to_study="version_2"):
   df = None
   if not os.path.isfile('data/DATOSABIERTOS_SISCOVID.zip') and data_to_study=="version_1":
@@ -44,9 +46,10 @@ def load_data(data_to_study="version_2"):
   df.dropna(subset=['FECHA_RESULTADO'], how='all', inplace=True)
   
   dates = []
+  # year/month/day
   for d in df["FECHA_RESULTADO"]:
     if type(d) is float:
-      d_ = str(d).split(".")[0]
+      d_ = str(int(d)).split(".")[0]
       dates.append(d_[:4]+"-"+d_[4:6]+"-"+d_[6:])
     else:
       a = d.split('/')
@@ -62,7 +65,8 @@ def extract_info(data, mode="PROVINCIA", dep_name="LIMA", dist_name="LIMA"):
   df = pd.DataFrame(data, columns=[mode, 'FECHA_RESULTADO'])
   df.rename(columns={'FECHA_RESULTADO':'fecha', mode:'region'}, inplace=True)
   regions = df['region'].unique()
-  df['fecha'] = pd.to_datetime(df['fecha'], infer_datetime_format=True)
+  #df['fecha'] = pd.to_datetime(df['fecha'], infer_datetime_format=True)
+  df['fecha'] = df['fecha'].apply(lambda x:datetime.strptime(x, '%Y-%m-%d'))
   #df['fecha'] = df['fecha'].astype(int)
   df.sort_values(by=['fecha'], inplace=True, ascending=True) 
   df_dates_regions = df.groupby(['fecha', 'region']).size().reset_index(name='confirmados')
@@ -70,7 +74,6 @@ def extract_info(data, mode="PROVINCIA", dep_name="LIMA", dist_name="LIMA"):
   return df_dates_regions, df_regions
 
 def prepare_data(depts_raw, mode="PROVINCIA"):
-  #depts_raw['fecha'] = depts_raw['fecha'].apply(lambda x: date.fromtimestamp(float(x)/1000))
   # manipulate in numpy, because I am too dumb and lazy to look up pandas APIs and just want to get it done
   sorted_regions = (depts_raw.sort_values(['region', 'fecha'], ascending=[True, True])).to_numpy()
   print(sorted_regions)
@@ -100,7 +103,7 @@ def prepare_data(depts_raw, mode="PROVINCIA"):
   # build back de pandas dataframe so we can save it.
   df = pd.DataFrame(data=new_region_values, index=depts_raw.index, columns=depts_raw.columns)
   df.drop(df.loc[df['confirmados']==0].index, inplace=True)
-  df.to_csv("data/"+mode+'_clean.csv')
+  df.to_csv("data/"+mode+'_clean.csv', index=False)
 
   # If you read this and think it is inneficient, you are completely correct!
   # The reason it is structured like this is that this has been broken

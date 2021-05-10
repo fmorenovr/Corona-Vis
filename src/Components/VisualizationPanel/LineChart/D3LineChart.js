@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 
 //export default function D3ScatterMediumPlot (containerSelector, data) {
-export default function D3LineChart (idSelector, dataset, timeLineData, daily_case, endDomain, projection, name_region) {
+export default function D3LineChart (idSelector, dataset, timeLineData, daily_case, endDomain, projection, name_region, total_region) {
 
 	//var margin = {top: 30, right: 50, bottom: 60, left: 70}
 	//  , width = window.innerWidth * 0.7 - margin.left - margin.right // Use the window's width 
@@ -210,7 +210,7 @@ export default function D3LineChart (idSelector, dataset, timeLineData, daily_ca
 
 
 	/* Legend */
-	var keys = [ {name: "Casos Diarios: "+name_region, color: "#83bbad"}]
+	var keys = [ {name: name_region+": "+total_region, color: "#83bbad"}]
 	
 	var legend_svg = d3.select("#legend")
 		.append("svg")
