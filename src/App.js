@@ -9,39 +9,23 @@ import IntervalPlot from './Components/VisualizationPanel/IntervalPlot/IntervalP
 
 import * as d3 from 'd3'
 
+import department_new_csv from "./preprocess/data/DEPARTAMENTO_news.csv"
+import department_intervals_csv from "./preprocess/data/DEPARTAMENTO_intervals.csv"
+import department_total_csv from "./preprocess/data/DEPARTAMENTO_total.csv"
 
-//import data_gps_worl from "./03-22-2020.csv"
-//import data_world from "./COVID-19/csse_covid_19_data/csse_covid_19_daily_reports/04-01-2020.csv"
+import province_new_csv from "./preprocess/data/PROVINCIA_news.csv"
+import province_intervals_csv from "./preprocess/data/PROVINCIA_intervals.csv"
+import province_total_csv from "./preprocess/data/PROVINCIA_total.csv"
 
-import new_cases_department from "./preprocess/data/DEPARTAMENTO_news.csv"
-import intervals_department from "./preprocess/data/DEPARTAMENTO_intervals.csv"
-import total_cases_department from "./preprocess/data/DEPARTAMENTO_total.csv"
+import district_new_csv from "./preprocess/data/DISTRITO_news.csv"
+import district_intervals_csv from "./preprocess/data/DISTRITO_intervals.csv"
+import district_total_csv from "./preprocess/data/DISTRITO_total.csv"
 
-import new_cases_province from "./preprocess/data/PROVINCIA_news.csv"
-import intervals_province from "./preprocess/data/PROVINCIA_intervals.csv"
-import total_cases_province from "./preprocess/data/PROVINCIA_total.csv"
+import * as dep_cases from "./Components/Variables"
 
-import new_cases_distric from "./preprocess/data/DISTRITO_news.csv"
-import intervals_distric from "./preprocess/data/DISTRITO_intervals.csv"
-import total_cases_distric from "./preprocess/data/DISTRITO_total.csv"
+let data_history_department = dep_cases.default.data_history_department;
 
-const host_name = ""
-
-function getTotalCases(){
-  var history_temp = [];
-  d3.csv(total_cases_department).then(function(cases){
-    cases.map(function(item){
-      var temp_dict = {}
-      temp_dict["name"] = item.region;
-      temp_dict["exits"] = parseInt(item.confirmados);
-      
-      history_temp.push(temp_dict)
-	  })
-  })
-  return history_temp;
-};
-
-const data_history_department = getTotalCases()
+console.log(data_history_department)
 
 var data_ = [
         {name: "LIMA", exits: 718113},
@@ -77,13 +61,13 @@ export default class App extends React.Component {
 	state = {
 		proyection_num: 2,
 
-		newCasesDepartmentData: d3.csv(new_cases_department),
-		intervalDepartmentData: d3.csv(intervals_department),
-		totalCasesDepartmentData: d3.csv(total_cases_department),
+		newCasesDepartmentData: d3.csv(department_new_csv),
+		intervalDepartmentData: d3.csv(department_intervals_csv),
+		totalCasesDepartmentData: d3.csv(department_total_csv),
 		
-		newCasesDistricData: d3.csv(new_cases_distric),
-		intervalsDistricData: d3.csv(intervals_distric),
-		totalCasesDistricData: d3.csv(total_cases_distric),
+		newCasesDistricData: d3.csv(district_new_csv),
+		intervalsDistricData: d3.csv(district_intervals_csv),
+		totalCasesDistricData: d3.csv(district_total_csv),
 
 		//dictrictData: d3.csv(`http://${host_name}:8000/surface/maps/`),
 		//regionData: d3.csv(`http://${host_name}:8000/surface/maps/`),
@@ -252,13 +236,8 @@ export default class App extends React.Component {
     
     var formatTime = d3.timeFormat("%B %d, %Y %I:%M %p");
 
-	  //var data = this.state.history_data.sort((a, b) => d3.descending(a.exits, b.exits))
-	  //var data = this.state.totalData;
 	  //var data = data_history_department.sort((a, b) => d3.descending(a.exits, b.exits));
 	  var data = data_;
-	  
-	  console.log(data)
-	  
 	  var total_confirmados = d3.sum(data_history_department, function(it){ return it.exits})
 	  
     return (

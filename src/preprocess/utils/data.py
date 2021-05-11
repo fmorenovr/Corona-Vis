@@ -58,6 +58,7 @@ def load_data(data_to_study="version_2"):
       dates.append(a[2]+'-'+a[1]+'-'+a[0])
 
   df["FECHA_RESULTADO"] = dates
+  df["PAIS"] = "PERU"
   
   return df
 

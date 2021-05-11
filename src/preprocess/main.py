@@ -5,7 +5,7 @@
 
 from utils import *
 
-modes=["DEPARTAMENTO", "PROVINCIA", "DISTRITO"]
+modes=["PAIS", "DEPARTAMENTO", "PROVINCIA", "DISTRITO"]
 #modes=["DISTRITO"]
 
 data = load_data()

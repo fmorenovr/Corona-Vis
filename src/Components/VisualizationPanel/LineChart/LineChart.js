@@ -4,11 +4,17 @@ import D3LineChart from "./D3LineChart"
 import "./LineChart.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import * as d3 from 'd3'
+import * as dep_cases from "../../Variables"
+
+let data_history_department = dep_cases.default.data_history_department;
+
 var lineChartPlot;
 
 export default class LineChart extends React.Component {
 
 	componentDidMount(){
+	  var total_confirmados = d3.sum(data_history_department, function(it){ return it.exits})
 		var endDomain = new Date()
 		endDomain.setDate(this.props.last.date.getDate());
 
@@ -19,22 +25,21 @@ export default class LineChart extends React.Component {
 				return {date: item.date, value: item.value - data[i-1].value};
 			}
 		})
-		lineChartPlot = D3LineChart("#linePlot", this.props.data, this.props.timeLineData, daily_case, endDomain, this.props.projection, this.props.nameRegion, this.props.totalData);
+		lineChartPlot = D3LineChart("#linePlot", this.props.data, this.props.timeLineData, daily_case, endDomain, this.props.projection, "Peru", total_confirmados);
     }
 
     componentDidUpdate(){
+		  var endDomain = new Date()
+		  endDomain.setDate(this.props.last.date.getDate() );
 
-		var endDomain = new Date()
-		endDomain.setDate(this.props.last.date.getDate() );
-
-		var daily_case = this.props.data.map(function(item, i, data){
-			if(i == 0 )
-				return {date: item.date, value: 0};
-			else{
-				return {date: item.date, value: item.value - data[i-1].value};
-			}
-		})
-		lineChartPlot = D3LineChart("#linePlot", this.props.data, this.props.timeLineData, daily_case, endDomain, this.props.projection, this.props.nameRegion, this.props.totalData);
+		  var daily_case = this.props.data.map(function(item, i, data){
+			  if(i == 0 )
+				  return {date: item.date, value: 0};
+			  else{
+				  return {date: item.date, value: item.value - data[i-1].value};
+			  }
+		  })
+		  lineChartPlot = D3LineChart("#linePlot", this.props.data, this.props.timeLineData, daily_case, endDomain, this.props.projection, this.props.nameRegion, this.props.totalData);
     }
 
     handleChangeForm = (event) => {
