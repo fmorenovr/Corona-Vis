@@ -1,6 +1,6 @@
 # CoronaVis
 
-A website to visualize the behavior of Corona Virus.
+A website to visualize the behavior of Corona Virus. This work was developed with [wzuniga](https://github.com/wzuniga)
 
 ## Install node and npm
 
